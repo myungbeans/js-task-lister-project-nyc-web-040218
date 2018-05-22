@@ -1,5 +1,4 @@
 store = {lists:[]};
-
 let listId = 0;
 
 class List {
@@ -16,7 +15,7 @@ class List {
   dropdownOptionsToHTML(){
     for(let list of store.lists){
       let option = document.createElement(`option`);
-      option.value = `${list.id}`;
+      option.value = `${list.title}`;
       option.innerHTML = `${list.title}`;
       const parent = document.getElementById(`parent-list`);
       parent.appendChild(option);
@@ -27,10 +26,22 @@ class List {
     console.log(`hi`);
   }
 
+  parser(template) {
+    const parser = new DOMParser();
+    let stringToDOM = parser.parseFromString(template, 'text/html');
+    return stringToDOM.body.firstChild;
+  }
 
+  renderForm(template, node, htmler) {
+    node.replaceChild(this.parser(template), node.firstChild);
+    htmler();
+  }
 
-  render(template, node, htmler) {
-    node.innerHTML = template;
+  renderList(template, node, htmler) {
+    node.append(this.parser(template));
+    let title = document.querySelector(`#lists > div:nth-child(${this.id}) > h2 > span`);
+    title.id = this.title;
+    title.innerHTML = this.title;
     htmler();
   }
 };
